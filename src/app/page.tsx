@@ -27,7 +27,7 @@ export default function HomePage() {
       </header>
       
       <div className="max-w-4xl mx-auto">
-        <Editor userId={user?.id ?? ''} />
+        <Editor />
       </div>
     </main>
   )
