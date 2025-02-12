@@ -35,7 +35,7 @@ export default function HomePage() {
     rememberMe: false
   })
   const [touched, setTouched] = useState<Record<string, boolean>>({})
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [isSuccess] = useState(false)
   const [formValidation, setFormValidation] = useState<FormValidation>({
     email: false,
     password: false,
@@ -378,7 +378,7 @@ export default function HomePage() {
                   </div>
                 </div>
               )}
-    <div>
+              <div>
                 <input
                   type="email"
                   name="email"

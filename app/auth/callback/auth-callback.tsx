@@ -19,7 +19,7 @@ export default function AuthCallback() {
           throw new Error('No tokens found in URL')
         }
 
-        const { data: { session }, error: sessionError } = await supabase.auth.setSession({
+        const { error: sessionError } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken
         })

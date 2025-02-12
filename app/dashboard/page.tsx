@@ -17,7 +17,7 @@ export default function DashboardPage() {
       router.push('/')
     }
 
-    // Show welcome message if it's first login
+    // Show welcome message if it&apos;s first login
     if (searchParams.get('welcome') === 'true') {
       setShowWelcome(true)
       setTimeout(() => setShowWelcome(false), 5000)
@@ -50,7 +50,7 @@ export default function DashboardPage() {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <span>Welcome to Verbi, {user.user_metadata.first_name}! Let's start writing.</span>
+          <span>Welcome to Verbi, {user.user_metadata.first_name}! Let&apos;s start writing.</span>
         </div>
       )}
 
