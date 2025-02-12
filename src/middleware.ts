@@ -5,24 +5,25 @@ import type { NextRequest } from 'next/server'
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   const supabase = createMiddlewareClient({ req, res })
-  const { data: { session } } = await supabase.auth.getSession()
 
-  // Log the current path and session status for debugging
-  console.log('Path:', req.nextUrl.pathname, 'Session:', !!session)
+  console.log('Middleware: checking path:', req.nextUrl.pathname)
 
-  // Allow access to login page and auth callback
-  if (req.nextUrl.pathname === '/login' || req.nextUrl.pathname.startsWith('/auth/callback')) {
-    return res
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  console.log('Middleware: session status:', !!session)
+
+  // Allow all routes except dashboard when not authenticated
+  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
+    console.log('Middleware: redirecting to home - no session')
+    return NextResponse.redirect(new URL('/', req.url))
   }
 
-  // Redirect to login if no session
-  if (!session) {
-    return NextResponse.redirect(new URL('/login', req.url))
-  }
-
+  console.log('Middleware: allowing request')
   return res
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)']
+  matcher: ['/dashboard/:path*']
 } 

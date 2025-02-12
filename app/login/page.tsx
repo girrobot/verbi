@@ -1,16 +1,8 @@
 'use client'
 
-import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { redirect } from 'next/navigation'
 
 export default function LoginPage() {
-  const { user, loading } = useAuth()
-
-  if (!loading && user) {
-    redirect('/')
-  }
-
   const handleAppleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'apple',
