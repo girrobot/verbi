@@ -18,6 +18,7 @@ import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import TextAlign from '@tiptap/extension-text-align'
 import { Extension } from '@tiptap/core'
 import Tooltip from './Tooltip'
+import { useRouter, useParams } from 'next/navigation'
 
 interface EditorAnalytics {
   wordCount: number
@@ -140,7 +141,9 @@ const CustomKeyboardShortcuts = Extension.create({
   },
 })
 
-export default function Editor({ userId }: { userId: string }) {
+export default function Editor() {
+  const router = useRouter()
+  const { id } = useParams()
   const [analytics, setAnalytics] = useState<EditorAnalytics>({
     wordCount: 0,
     readingTime: 0,
@@ -196,7 +199,14 @@ export default function Editor({ userId }: { userId: string }) {
         class: 'prose prose-lg max-w-none focus:outline-none'
       }
     },
-    immediatelyRender: false
+    immediatelyRender: false,
+    onUpdate: async ({ editor }) => {
+      const content = editor.getHTML()
+      await supabase
+        .from('documents')
+        .update({ content })
+        .eq('id', id)
+    },
   })
 
   const handleContentUpdate = useCallback(
@@ -227,14 +237,11 @@ export default function Editor({ userId }: { userId: string }) {
           ].slice(0, 50) // Keep last 50 entries
         }))
 
-        if (userId) {
+        if (id) {
           await supabase
-            .from('drafts')
-            .upsert({
-              user_id: userId,
-              content,
-              updated_at: new Date().toISOString()
-            })
+            .from('documents')
+            .update({ content })
+            .eq('id', id)
         }
       } catch (err) {
         console.error('Content update error:', err)
@@ -242,7 +249,7 @@ export default function Editor({ userId }: { userId: string }) {
         setIsSaving(false)
       }
     }, 1000),
-    [userId]
+    [id]
   )
 
   useEffect(() => {
@@ -252,6 +259,27 @@ export default function Editor({ userId }: { userId: string }) {
       })
     }
   }, [editor, handleContentUpdate])
+
+  useEffect(() => {
+    const fetchDocument = async () => {
+      const { data, error } = await supabase
+        .from('documents')
+        .select('content')
+        .eq('id', id)
+        .single()
+
+      if (error) {
+        console.error('Error loading document:', error)
+        router.push('/dashboard')
+      } else {
+        editor?.commands.setContent(data.content)
+      }
+    }
+
+    if (id) {
+      fetchDocument()
+    }
+  }, [id, editor, router])
 
   if (!editor) {
     return <div className="animate-pulse h-[600px] bg-gray-100 rounded-lg" />
