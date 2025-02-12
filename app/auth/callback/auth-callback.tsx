@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import NavBar from '@/components/NavBar'
 
 export default function AuthCallback() {
   const router = useRouter()
@@ -54,11 +55,16 @@ export default function AuthCallback() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-100">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-        <p className="text-gray-600">Verifying your account...</p>
-      </div>
+    <div>
+      <NavBar />
+      <main className="p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-100">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Verifying your account...</p>
+          </div>
+        </div>
+      </main>
     </div>
   )
 } 
